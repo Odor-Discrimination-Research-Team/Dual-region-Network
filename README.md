@@ -8,59 +8,61 @@
 
 ---
 
-Overview
---------
+## Overview
 The DRN is designed to classify odor-evoked local field potentials (LFPs) recorded
 from two brain regions: the olfactory bulb (OB) and the piriform cortex (PCx).
 It uses parallel Region-Specific Networks (RSNs) to process each region
 independently, then fuses them with an attention mechanism before classification.
 
-Main Components
----------------
-1. **ChannelAttention** (CA)
-   - Learns channel-wise weights using distinct MLPs for max and average pooled
-     features.
+---
 
-2. **SpatialAttention** (SA)
-   - Learns spatial importance using pooled features, convolution, and sigmoid
-     gating.
+## Main Components
+1. **ChannelAttention** (CA)  
+   Learns channel-wise weights using distinct MLPs for max and average pooled features.
 
-3. **ResidualBlock** (RB)
-   - Pre-activation residual block with channel attention; supports downsampling
-     by stride=2.
+2. **SpatialAttention** (SA)  
+   Learns spatial importance using pooled features, convolution, and sigmoid gating.
 
-4. **RegionSpecificNet** (RSN)
-   - Full processing pipeline per region:
-     CA → ConvBlock → MaxPool → N×RB → SA → Global pooling → Feature Projection.
+3. **ResidualBlock** (RB)  
+   Pre-activation residual block with channel attention; supports downsampling by stride=2.
 
-5. **DualRegionNet** (DRN)
-   - Combines two RSNs (OB and PCx), applies Fusion Attention (FA), and feeds
-     fused features into:
-       • A deep classifier block
-       • A shallow skip path
-     Logits from both are summed for final predictions.
+4. **RegionSpecificNet** (RSN)  
+   Full processing pipeline per region:  
+   `CA → ConvBlock → MaxPool → N×RB → SA → Global pooling → Feature Projection`
 
-Training Utilities
-------------------
-- **DualInputDataset**: wraps OB, PCx, and labels into a PyTorch dataset.
-- **FocalLoss**: γ=2.0, reduction='sum', robust to class imbalance.
-- **Mixup**: on-the-fly augmentation applied consistently across OB/PCx.
-- **train_epoch / validate**: single-epoch training and validation loops.
-- **train_model**: full training routine (AdamW, gradient clipping, 70 epochs by default).
+5. **DualRegionNet** (DRN)  
+   Combines two RSNs (OB and PCx), applies Fusion Attention (FA), and feeds fused features into:
+   - A deep classifier block  
+   - A shallow skip path  
+   Logits from both are summed for final predictions.
+
+---
+
+## Training Utilities
+- **DualInputDataset**: wraps OB, PCx, and labels into a PyTorch dataset.  
+- **FocalLoss**: γ=2.0, reduction='sum', robust to class imbalance.  
+- **Mixup**: on-the-fly augmentation applied consistently across OB/PCx.  
+- **train_epoch / validate**: single-epoch training and validation loops.  
+- **train_model**: full training routine (AdamW, gradient clipping, 70 epochs by default).  
 - **train_ensemble**: trains with K-fold CV and assembles an ensemble prediction
-  on a held-out balanced test set (50 samples/class).
+  on a held-out balanced test set (50 samples/class).  
 
-Usage
------
+---
+
+## Usage
 Typical workflow:
-    • Prepare OB and PCx feature arrays shaped (N, Channels, Bands).
-    • Encode class labels to integers.
-    • Call `train_ensemble(...)` with data arrays, config dict, and LabelEncoder.
+- Prepare OB and PCx feature arrays shaped `(N, Channels, Bands)`.
+- Encode class labels to integers.
+- Call `train_ensemble(...)` with data arrays, config dict, and `LabelEncoder`.
 
-Dependencies
-------------
-- Python 3.10+
-- PyTorch >= 2.0
-- NumPy, SciPy
-- scikit-learn
-- tqdm
+---
+
+## Dependencies
+- Python 3.10+  
+- PyTorch >= 2.0  
+- NumPy, SciPy  
+- scikit-learn  
+- tqdm  
+
+---
+
