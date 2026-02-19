@@ -62,7 +62,10 @@ Typical workflow:
 - PyTorch >= 2.0  
 - NumPy, SciPy  
 - scikit-learn  
-- tqdm  
+- tqdm
+
+## Acknowledgments
+This project was supported by the **NVIDIA Grant Program** and the code was tested and trained on an A100 DGX system.
 
 ---
 
